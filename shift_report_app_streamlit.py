@@ -1,4 +1,4 @@
-import streamlit as st
+חםimport streamlit as st
 import duckdb
 from datetime import datetime, date, time
 import pandas as pd
@@ -580,7 +580,7 @@ else:
                     work_location = st.text_input("פרט מיקום:", placeholder="הכנס מיקום")
             
             with col4:
-                replacing_who = st.selectbox("?עם מי עשית חפיפה :" ,names_list)
+                replacing_who = st.selectbox("? מי חפף אותי בכניסה למשמרת:" ,names_list)
     
             # תאריך ושעה נוכחיים (לא ניתנים לשינוי)
             current_date = date.today()
@@ -605,7 +605,7 @@ else:
             col3, col4 = st.columns(2)
             
             with col3:
-                replacement_person = st.selectbox("? למי עשית חפיפה:",names_list )
+                replacement_person = st.selectbox("? את מי חפפתי בסיום המשמרת:",names_list )
             
             with col4:
                 reports_count = st.number_input(" מספר דיווחים שהעלית במשמרת -נתון זה לא בוחן את עבודתך *:", min_value=0, step=1, value=0)

@@ -457,51 +457,51 @@ elif page == "ADMIN":
             st.error(f"שגיאה בטעינת נתוני השעות: {str(e)}")
     
     elif admin_tab == "ירוק בעיניים - מעקב":
-        st.subheader("👀 מעקב ירוק בעיניים")
+    st.subheader("👀 מעקב ירוק בעיניים")
+    
+    try:
+        # הצגת כל הדיווחים עם המרה מפורשת ל-TIMESTAMP
+        all_reports = con.execute("""
+            SELECT personal_id, reporter_name, current_location, 
+                   strftime('%d/%m/%Y %H:%M', CAST(timestamp AS TIMESTAMP)) as report_datetime
+            FROM green_eyes 
+            ORDER BY CAST(timestamp AS TIMESTAMP) DESC
+        """).fetchall()
         
-        try:
-            # הצגת כל הדיווחים
-            all_reports = con.execute("""
-                SELECT personal_id, reporter_name, current_location, 
-                       strftime('%d/%m/%Y %H:%M', datetime(timestamp)) as report_datetime
-                FROM green_eyes 
-                ORDER BY timestamp DESC
-            """).fetchall()
+        # יצירת רשימת מי דיווח
+        reported_ids = [report[0] for report in all_reports] if all_reports else []
+        
+        # מי לא דיווח
+        not_reported = []
+        for pid, name in personal_data.items():
+            if pid not in reported_ids:
+                not_reported.append((pid, name))
+        
+        # הצגת סיכום
+        col1, col2 = st.columns(2)
+        with col1:
+            st.metric("דיווחו על מיקום", len(set(reported_ids)))
+        with col2:
+            st.metric("לא דיווחו", len(not_reported))
+        
+        # טבלת הדיווחים
+        if all_reports:
+            st.subheader("📊 כל הדיווחים")
+            df_reports = pd.DataFrame(all_reports, columns=[
+                'מס אישי', 'שם', 'מיקום נוכחי', 'תאריך ושעת עדכון'
+            ])
+            st.dataframe(df_reports, use_container_width=True, hide_index=True)
+        
+        # מי לא דיווח
+        if not_reported:
+            st.subheader("⚠️ לא דיווחו על מיקום")
+            for pid, name in not_reported:
+                st.warning(f"**{name}** (מ.א. {pid}) - לא דיווח על מיקום")
+        else:
+            st.success("✅ כולם דיווחו על מיקום!")
             
-            # יצירת רשימת מי דיווח
-            reported_ids = [report[0] for report in all_reports] if all_reports else []
-            
-            # מי לא דיווח
-            not_reported = []
-            for pid, name in personal_data.items():
-                if pid not in reported_ids:
-                    not_reported.append((pid, name))
-            
-            # הצגת סיכום
-            col1, col2 = st.columns(2)
-            with col1:
-                st.metric("דיווחו על מיקום", len(reported_ids))
-            with col2:
-                st.metric("לא דיווחו", len(not_reported))
-            
-            # טבלת הדיווחים
-            if all_reports:
-                st.subheader("📊 כל הדיווחים")
-                df_reports = pd.DataFrame(all_reports, columns=[
-                    'מס אישי', 'שם', 'מיקום נוכחי', 'תאריך ושעת עדכון'
-                ])
-                st.dataframe(df_reports, use_container_width=True, hide_index=True)
-            
-            # מי לא דיווח
-            if not_reported:
-                st.subheader("⚠️ לא דיווחו על מיקום")
-                for pid, name in not_reported:
-                    st.warning(f"**{name}** (מ.א. {pid}) - לא דיווח על מיקום")
-            else:
-                st.success("✅ כולם דיווחו על מיקום!")
-                
-        except Exception as e:
-            st.error(f"שגיאה בטעינת נתוני ירוק בעיניים: {str(e)}")
+    except Exception as e:
+        st.error(f"שגיאה בטעינת נתוני ירוק בעיניים: {str(e)}")
     
     elif admin_tab == "ניהול נתונים":
         st.subheader("🗂️ ניהול נתונים")

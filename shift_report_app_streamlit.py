@@ -1,4 +1,4 @@
-import streamlit as st
+0import streamlit as st
 import duckdb
 from datetime import datetime, date, time
 import pandas as pd
@@ -390,7 +390,7 @@ else:
                     work_location = st.text_input("פרט מיקום:", placeholder="הכנס מיקום")
             
             with col4:
-                replacing_who = st.selectbox("את מי אתה מחליף :" , list(personal_data.values()))
+                replacing_who = st.selectbox("את מי אתה מחליף :" , [list(personal_data.values())])
     
             # תאריך ושעה נוכחיים (לא ניתנים לשינוי)
             current_date = date.today()

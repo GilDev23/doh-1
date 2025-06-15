@@ -295,12 +295,12 @@ if page == "ירוק בעיניים":
     if st.checkbox("🔍 הצג מי כבר דיווח היום"):
         try:
             today_reports = con.execute("""
-                SELECT personal_id, reporter_name, current_location, 
-                       strftime('%H:%M', timestamp) as report_time
-                FROM green_eyes 
-                WHERE DATE(timestamp) = CURRENT_DATE
-                ORDER BY timestamp DESC
-            """).fetchall()
+    SELECT personal_id, reporter_name, current_location, 
+           strftime('%H:%M', CAST(timestamp AS TIMESTAMP)) as report_time
+    FROM green_eyes 
+    WHERE DATE(CAST(timestamp AS TIMESTAMP)) = CURRENT_DATE
+    ORDER BY CAST(timestamp AS TIMESTAMP) DESC
+""").fetchall()
             
             if today_reports:
                 st.subheader("📋 דיווחים היום")

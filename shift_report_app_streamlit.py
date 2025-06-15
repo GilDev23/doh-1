@@ -36,7 +36,7 @@ def init_database():
             personal_id TEXT,
             reporter_name TEXT,
             current_location TEXT,
-            timestamp TEXT,
+            timestamp TIMESTAMP,
             PRIMARY KEY (personal_id)
         )
         """)

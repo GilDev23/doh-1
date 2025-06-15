@@ -65,6 +65,7 @@ personal_data = {
     "9000708": "איימן עוידה",
     "5112774": "איתמר גורדל",
     "8409033": "אלמוג טרבלסי",
+    "5140770": "אלי רובין",
     "6119571": "אמין סאבק",
     "6417388": "אסף גבור",
     "5195808": "אשר המר",
@@ -158,6 +159,7 @@ names_list = [
     "איימן עוידה",
     "איתמר גורדל",
     "אלמוג טרבלסי",
+    "אלי רובין",
     "אמין סאבק",
     "אסף גבור",
     "אשר המר",
@@ -342,6 +344,7 @@ elif page == "ADMIN":
                 SELECT 
                     e.personal_id,
                     e.reporter_name,
+                    e.work_location,
                     e.start_date,
                     e.start_time,
                     e.timestamp as entry_time,
@@ -364,6 +367,7 @@ elif page == "ADMIN":
                 SELECT 
                     personal_id,
                     reporter_name,
+                    work_location,
                     start_date,
                     start_time,
                     end_date,
@@ -387,6 +391,7 @@ elif page == "ADMIN":
             SELECT 
                 personal_id,
                 reporter_name,
+                work_location,
                 COUNT(*) as total_shifts,
                 COUNT(*) FILTER (WHERE hours_worked IS NOT NULL) as completed_shifts,
                 ROUND(SUM(COALESCE(hours_worked, 0)), 2) as total_hours,
@@ -600,7 +605,7 @@ else:
                 replacement_person = st.selectbox("מי מחליף אותך:",names_list )
             
             with col4:
-                reports_count = st.number_input("מספר דיווחים שהעלית במשמרת *:", min_value=0, step=1, value=0)
+                reports_count = st.number_input(" מספר דיווחים שהעלית במשמרת -נתון זה לא בוחן את עבודתך *:", min_value=0, step=1, value=0)
             
             # תאריך ושעה נוכחיים (לא ניתנים לשינוי)
             current_date = date.today()
@@ -697,4 +702,5 @@ with st.expander("ℹ️ הוראות שימוש"):
 
 # פוטר
 st.markdown("---")
-st.markdown("*מערכת דיווח משמרות - גרסה 2.1*")
+st.markdown("*מערכת דיווח משמרות - גרסה 2.2*")
+

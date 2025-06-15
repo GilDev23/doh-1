@@ -292,25 +292,7 @@ if page == "ירוק בעיניים":
 
     # הצגת מי כבר דיווח היום
     st.markdown("---")
-    if st.checkbox("🔍 הצג מי כבר דיווח היום"):
-        try:
-            today_reports = con.execute("""
-    SELECT personal_id, reporter_name, current_location, 
-           strftime('%H:%M', CAST(timestamp AS TIMESTAMP)) as report_time
-    FROM green_eyes 
-    WHERE DATE(CAST(timestamp AS TIMESTAMP)) = CURRENT_DATE
-    ORDER BY CAST(timestamp AS TIMESTAMP) DESC
-""").fetchall()
-            
-            if today_reports:
-                st.subheader("📋 דיווחים היום")
-                for report in today_reports:
-                    st.write(f"📍 **{report[1]}** (מ.א. {report[0]}) - {report[2]} - {report[3]}")
-            else:
-                st.info("אין דיווחים היום")
-                
-        except Exception as e:
-            st.error(f"שגיאה בטעינת הדיווחים: {str(e)}")
+    
 
 # עמוד דיווח שעות עם הגנת קוד
 elif page == "ADMIN":

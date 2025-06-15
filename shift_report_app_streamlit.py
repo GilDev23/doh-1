@@ -390,8 +390,8 @@ else:
                     work_location = st.text_input("פרט מיקום:", placeholder="הכנס מיקום")
             
             with col4:
-                replacing_who = st.selectbox(": את מי אתה מחליף",["אסף גבור","חיה סגל","צאלח חיר"])
-            
+                replacing_who = st.selectbox(":את מי אתה מחליף :"personal_data)
+    
             # תאריך ושעה נוכחיים (לא ניתנים לשינוי)
             current_date = date.today()
             current_time = datetime.now().time().replace(microsecond=0)

@@ -242,6 +242,7 @@ names_list = [
     "תומר מעודה"
 ]
 # עמוד ירוק בעיניים
+
 if page == "ירוק בעיניים":
     st.title("👀 ירוק בעיניים")
     st.markdown("---")
@@ -263,38 +264,27 @@ if page == "ירוק בעיניים":
                     st.error("מספר אישי לא נמצא במערכת")
         
         with col2:
-            current_location = st.selectbox("מיקום נוכחי *", [
-                "גלילות", 
-                "משגב", 
-                "בית", 
-                "חופש", 
-                "מילואים",
-                "חופשת מחלה",
-                "אחר"
-            ])
-            if current_location == "אחר":
-                current_location = st.text_input("פרט מיקום:", placeholder="הכנס מיקום")
+            current_location = st.text_input("מיקום נוכחי *", placeholder="הכנס מיקום חופשי")
         
         # כפתור שליחה
         submitted = st.form_submit_button("📍 עדכן מיקום", type="primary")
         
         if submitted:
             # בדיקת שדות חובה
-            if not personal_id or not current_location:
+            if not personal_id or not current_location.strip():
                 st.error("❌ נא למלא את כל השדות הנדרשים")
             elif reporter_name == "מספר לא נמצא":
                 st.error("❌ מספר אישי לא תקין")
             else:
                 try:
-                    timestamp = datetime.now()                   
-                    # שמירת הנתונים (או עדכון אם קיים)
+                    timestamp = datetime.now()
                     con.execute("""
                         INSERT OR REPLACE INTO green_eyes (
                             personal_id, reporter_name, current_location, timestamp
                         ) VALUES (?, ?, ?, ?)
-                    """, (personal_id, reporter_name, current_location, timestamp))
+                    """, (personal_id, reporter_name, current_location.strip(), timestamp))
                     
-                    st.success(f"✅ המיקום עודכן בהצלחה! {reporter_name} נמצא ב{current_location}")
+                    st.success(f"✅ המיקום עודכן בהצלחה! {reporter_name} נמצא ב{current_location.strip()}")
                     st.balloons()
                     
                 except Exception as e:
@@ -306,7 +296,7 @@ if page == "ירוק בעיניים":
         try:
             today_reports = con.execute("""
                 SELECT personal_id, reporter_name, current_location, 
-                       strftime('%H:%M', datetime(timestamp)) as report_time
+                       strftime('%H:%M', timestamp) as report_time
                 FROM green_eyes 
                 WHERE DATE(timestamp) = CURRENT_DATE
                 ORDER BY timestamp DESC
@@ -315,16 +305,7 @@ if page == "ירוק בעיניים":
             if today_reports:
                 st.subheader("📋 דיווחים היום")
                 for report in today_reports:
-                    location_icon = {
-                        "גלילות": "🏢",
-                        "משגב": "🏢", 
-                        "בית": "🏠",
-                        "חופש": "🏖️",
-                        "מילואים": "🪖",
-                        "חופשת מחלה": "🤒"
-                    }.get(report[2], "📍")
-                    
-                    st.write(f"{location_icon} **{report[1]}** (מ.א. {report[0]}) - {report[2]} - {report[3]}")
+                    st.write(f"📍 **{report[1]}** (מ.א. {report[0]}) - {report[2]} - {report[3]}")
             else:
                 st.info("אין דיווחים היום")
                 

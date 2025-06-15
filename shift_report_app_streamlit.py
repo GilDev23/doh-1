@@ -500,8 +500,8 @@ elif page == "ADMIN":
         else:
             st.success("✅ כולם דיווחו על מיקום!")
             
-    except Exception as e:
-        st.error(f"שגיאה בטעינת נתוני ירוק בעיניים: {str(e)}")
+        except Exception as e:
+            st.error(f"שגיאה בטעינת נתוני ירוק בעיניים: {str(e)}")
     
     elif admin_tab == "ניהול נתונים":
         st.subheader("🗂️ ניהול נתונים")

@@ -37,6 +37,7 @@ def init_database():
             reporter_name TEXT,
             current_location TEXT,
             timestamp TIMESTAMP,
+            on_shift TEXT,
             PRIMARY KEY (personal_id)
         )
         """)
@@ -267,6 +268,9 @@ if page == "ירוק בעיניים":
         
         with col2:
             current_location = st.text_input("מיקום נוכחי *", placeholder="הכנס מיקום חופשי")
+
+            on_shift = st.radio("האם אתה במשמרת או בפעילות מבצעית?", ["כן", "לא"])
+            on_shift_icon = "✅" if on_shift == "כן" else "❌"
         
         # כפתור שליחה
         submitted = st.form_submit_button("📍 עדכן מיקום", type="primary")
@@ -449,12 +453,12 @@ elif page == "ADMIN":
         try:
             # הצגת כל הדיווחים עם המרה מפורשת ל-TIMESTAMP
             all_reports = con.execute("""
-            SELECT personal_id, reporter_name, current_location, 
+            SELECT personal_id, reporter_name, current_location, on_shift,
                    strftime('%d/%m/%Y %H:%M', CAST(timestamp AS TIMESTAMP)) as report_datetime
             FROM green_eyes 
             ORDER BY CAST(timestamp AS TIMESTAMP) DESC
         """).fetchall()
-        
+            
             # יצירת רשימת מי דיווח
             reported_ids = [report[0] for report in all_reports] if all_reports else []
         
@@ -475,7 +479,7 @@ elif page == "ADMIN":
             if all_reports:
                 st.subheader("📊 כל הדיווחים")
                 df_reports = pd.DataFrame(all_reports, columns=[
-                'מס אישי', 'שם', 'מיקום נוכחי', 'תאריך ושעת עדכון'
+                'מס אישי', 'שם', 'מיקום נוכחי', 'האם במשמרת' , 'תאריך ושעת עדכון'
             ])
                 st.dataframe(df_reports, use_container_width=True, hide_index=True)
          

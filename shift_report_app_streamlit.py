@@ -403,7 +403,7 @@ elif page == "ADMIN":
             if results:
                 # יצירת DataFrame להצגה
                 df = pd.DataFrame(results, columns=[
-                    'מס אישי', 'שם', 'סה״כ משמרות', 'משמרות שהושלמו', 
+                    'מס אישי', 'שם','מיקום עבודה' , 'סה״כ משמרות', 'משמרות שהושלמו', 
                     'סה״כ שעות', 'ממוצע שעות למשמרת', 'תאריך ראשון', 'תאריך אחרון'
                 ])
                 
@@ -567,7 +567,7 @@ else:
             col3, col4 = st.columns(2)
             
             with col3:
-                work_location = st.selectbox("מיקום עבודה:", ["גלילות", "משגב", "בית", "אחר"])
+                work_location = st.selectbox("מיקום עבודה:", ["גלילות", "משגב","צניפים", "בית", "אחר"])
                 if work_location == "אחר":
                     work_location = st.text_input("פרט מיקום:", placeholder="הכנס מיקום")
             

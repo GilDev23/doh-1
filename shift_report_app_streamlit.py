@@ -563,10 +563,11 @@ else:
             personal_id = st.text_input("מספר אישי (מ.א.) *", placeholder="הכנס מספר אישי")
             if personal_id in personal_data:
                 reporter_name = personal_data[personal_id]
+                st.success(f"שלום {reporter_name}")
             else:
                 reporter_name = "מספר לא נמצא"
-
-            reporter_name = (f"{reporter_name}")
+                if personal_id:
+                    st.error("מספר אישי לא נמצא במערכת")
         
         with col2:
             unit_commander = st.selectbox("מפקד החוליה *", ["ויסאם אסד" , "יובל שטפל" , "ירדן קרן", "דניאל הנו" , "נזיה הנו" , "אסף גבור" , "נתי שיינפלד","כנרת המבורגר"])

@@ -399,7 +399,7 @@ elif page == "ADMIN":
                 MIN(start_date) as first_shift_date,
                 MAX(COALESCE(end_date, start_date)) as last_shift_date
             FROM calculated_hours
-            GROUP BY personal_id, reporter_name
+            GROUP BY personal_id, reporter_name, work_location
             ORDER BY total_hours DESC
             """
             

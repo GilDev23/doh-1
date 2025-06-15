@@ -286,8 +286,7 @@ if page == "ירוק בעיניים":
                 st.error("❌ מספר אישי לא תקין")
             else:
                 try:
-                    timestamp = datetime.now().isoformat()
-                    
+                    timestamp = datetime.now()                   
                     # שמירת הנתונים (או עדכון אם קיים)
                     con.execute("""
                         INSERT OR REPLACE INTO green_eyes (

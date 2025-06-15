@@ -11,6 +11,7 @@ st.set_page_config(page_title="דיווח משמרת", layout="centered", page_i
 def init_database():
     try:
         con = duckdb.connect("reports.db")
+        # יצירת טבלת דיווחים
         con.execute("""
         CREATE TABLE IF NOT EXISTS reports (
             report_type TEXT,
@@ -29,6 +30,16 @@ def init_database():
             end_time TEXT
         )
         """)
+        # יצירת טבלת ירוק בעיניים
+        con.execute("""
+        CREATE TABLE IF NOT EXISTS green_eyes (
+            personal_id TEXT,
+            reporter_name TEXT,
+            current_location TEXT,
+            timestamp TEXT,
+            PRIMARY KEY (personal_id)
+        )
+        """)
         return con
     except Exception as e:
         st.error(f"שגיאה בהתחברות למסד הנתונים: {e}")
@@ -42,7 +53,7 @@ if con is None:
 
 # תפריט ניווט
 st.sidebar.title("🧭 ניווט")
-page = st.sidebar.selectbox("בחר עמוד:", ["""דו"ח 1""", "ADMIN"])
+page = st.sidebar.selectbox("בחר עמוד:", ["""דו"ח 1""", "ירוק בעיניים", "ADMIN"])
 
 personal_data = {
     "6001723": "אברהם עמרוסי",
@@ -138,102 +149,99 @@ personal_data = {
     "9103360": "תומר מעודה"
 }
 
-names_list = [
-    "אברהם עמרוסי",
-    "אדי נבואני",
-    "אדם גבאי",
-    "אורי הרמוס",
-    "אורי הרשנהאוט",
-    "איימן חג'לה",
-    "איימן עוידה",
-    "איתמר גורדל",
-    "אלמוג טרבלסי",
-    "אמין סאבק",
-    "אסף גבור",
-    "אשר המר",
-    "ביאן חמוד",
-    "גלעד ששון",
-    "דוד ליפשיץ",
-    "דוד סורוצקין",
-    "דין מוריאל",
-    "דניאל הנו",
-    "דרור לוי",
-    "האני הנו",
-    "הדס ממן",
-    "הנרי זהר",
-    "הראל גבע",
-    "וג'די סיף",
-    "ודיע שחאן",
-    "והאב עאמר",
-    "וסאם אסד",
-    "וסאם סעיד",
-    "ורד באדר",
-    "חאלד סואעד",
-    "חגי ישראלי",
-    "חוסיין מרזוק",
-    "חיה סיגל",
-    "חיים סרצ'וק",
-    "טל מצא",
-    "יאשיהו וייזר",
-    "יהונתן וייס",
-    "יובל שטפל",
-    "יוסף בלעוס",
-    "יוסף רומנו",
-    "יוסף שוען",
-    "יחיא מחאמיד",
-    "יחיאל רדוצקי",
-    "יעקב וידר",
-    "יעקב ראשי",
-    "ירדן קרן",
-    "ישי ספיבק",
-    "כינאן חשאן",
-    "כנרת המבורגר",
-    "לירון עמרן",
-    "לירן רפאלי",
-    "מאור טירי",
-    "מאיר מסרי",
-    "מחמד כעביה",
-    "מתן כהן",
-    "נהוראי שמעון גיל",
-    "נזיה הנו",
-    "נפתלי אורטנברג",
-    "נתי שיינפלד",
-    "סאלח ח'יר",
-    "סאפי ביראני",
-    "סלים הנו",
-    "סלימאן אקטיש",
-    "סמיר דיאב",
-    "סנדר שרבי",
-    "ספדי טופאן",
-    "עאמר מוכתר",
-    "עומרי אבודולה",
-    "עופר בצלאל",
-    "עמאד שאמי",
-    "עמאד שחידם",
-    "עמיחי סלומון",
-    "עמיר עבד",
-    "עמיר עטילה",
-    "עמית כהן סקלי",
-    "ענבל פיש",
-    "פארס ח'יר",
-    "צחי פנטון",
-    "ראיד רחאל",
-    "ראמי חמוד",
-    "ראמי מוכתר",
-    "רואד ברכאת",
-    "רולאן מוקלד",
-    "רונן נבואני",
-    "שאדי פרהוד",
-    "שחר בן זקן",
-    "שי שוהם",
-    "שמואל שניאור סלומון",
-    "שריף עליאן",
-    "תומר חוכימה",
-    "תומר מעודה"
-]
+# עמוד ירוק בעיניים
+if page == "ירוק בעיניים":
+    st.title("👀 ירוק בעיניים")
+    st.markdown("---")
+    
+    # טופס דיווח ירוק בעיניים
+    with st.form("green_eyes_form", clear_on_submit=True):
+        st.subheader("דיווח מיקום נוכחי")
+        
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            personal_id = st.text_input("מספר אישי (מ.א.) *", placeholder="הכנס מספר אישי")
+            if personal_id in personal_data:
+                reporter_name = personal_data[personal_id]
+                st.success(f"שלום {reporter_name}")
+            else:
+                reporter_name = "מספר לא נמצא"
+                if personal_id:
+                    st.error("מספר אישי לא נמצא במערכת")
+        
+        with col2:
+            current_location = st.selectbox("מיקום נוכחי *", [
+                "גלילות", 
+                "משגב", 
+                "בית", 
+                "חופש", 
+                "מילואים",
+                "חופשת מחלה",
+                "אחר"
+            ])
+            if current_location == "אחר":
+                current_location = st.text_input("פרט מיקום:", placeholder="הכנס מיקום")
+        
+        # כפתור שליחה
+        submitted = st.form_submit_button("📍 עדכן מיקום", type="primary")
+        
+        if submitted:
+            # בדיקת שדות חובה
+            if not personal_id or not current_location:
+                st.error("❌ נא למלא את כל השדות הנדרשים")
+            elif reporter_name == "מספר לא נמצא":
+                st.error("❌ מספר אישי לא תקין")
+            else:
+                try:
+                    timestamp = datetime.now().isoformat()
+                    
+                    # שמירת הנתונים (או עדכון אם קיים)
+                    con.execute("""
+                        INSERT OR REPLACE INTO green_eyes (
+                            personal_id, reporter_name, current_location, timestamp
+                        ) VALUES (?, ?, ?, ?)
+                    """, (personal_id, reporter_name, current_location, timestamp))
+                    
+                    st.success(f"✅ המיקום עודכן בהצלחה! {reporter_name} נמצא ב{current_location}")
+                    st.balloons()
+                    
+                except Exception as e:
+                    st.error(f"❌ שגיאה בשמירת הנתונים: {str(e)}")
+
+    # הצגת מי כבר דיווח היום
+    st.markdown("---")
+    if st.checkbox("🔍 הצג מי כבר דיווח היום"):
+        try:
+            today_reports = con.execute("""
+                SELECT personal_id, reporter_name, current_location, 
+                       strftime('%H:%M', datetime(timestamp)) as report_time
+                FROM green_eyes 
+                WHERE DATE(timestamp) = CURRENT_DATE
+                ORDER BY timestamp DESC
+            """).fetchall()
+            
+            if today_reports:
+                st.subheader("📋 דיווחים היום")
+                for report in today_reports:
+                    location_icon = {
+                        "גלילות": "🏢",
+                        "משגב": "🏢", 
+                        "בית": "🏠",
+                        "חופש": "🏖️",
+                        "מילואים": "🪖",
+                        "חופשת מחלה": "🤒"
+                    }.get(report[2], "📍")
+                    
+                    st.write(f"{location_icon} **{report[1]}** (מ.א. {report[0]}) - {report[2]} - {report[3]}")
+            else:
+                st.info("אין דיווחים היום")
+                
+        except Exception as e:
+            st.error(f"שגיאה בטעינת הדיווחים: {str(e)}")
 
 # עמוד דיווח שעות עם הגנת קוד
-if page == "ADMIN":
+elif page == "ADMIN":
     st.title("⏰ דף מפקד")
     st.markdown("---")
     
@@ -248,197 +256,224 @@ if page == "ADMIN":
         if st.button("אמת קוד"):
             if access_code == "365365":
                 st.session_state.access_granted = True
-                st.success("✅ קוד נכון! כעת יש לך גישה לדיווח השעות")
+                st.success("✅ קוד נכון! כעת יש לך גישה לדף המפקד")
                 st.rerun()
             else:
                 st.error("❌ קוד שגוי!")
         st.stop()
     
-    # הצגת דיווח שעות
-    st.subheader("📊 סיכום שעות עבודה השבוע")
+    # תפריט בדף המפקד
+    admin_tab = st.selectbox("בחר סוג דיווח:", [
+        "סיכום שעות עבודה", 
+        "ירוק בעיניים - מעקב", 
+        "ניהול נתונים"
+    ])
     
-    try:
-        # חישוב תאריכי השבוע הנוכחי (ראשון עד ראשון)
-        today = date.today()
-        days_since_sunday = (today.weekday() + 1) % 7
-        week_start = today - pd.Timedelta(days=days_since_sunday)
-        week_end = week_start + pd.Timedelta(days=6)
+    if admin_tab == "סיכום שעות עבודה":
+        # הצגת דיווח שעות
+        st.subheader("📊 סיכום שעות עבודה השבוע")
         
-        st.info(f"השבוע: {week_start.strftime('%d/%m/%Y')} - {week_end.strftime('%d/%m/%Y')}")
-        
-        # שאילתה לחישוב שעות עבודה - מפושטת
-        hours_query = """
-        WITH entry_exits AS (
-            SELECT 
-                e.personal_id,
-                e.reporter_name,
-                e.start_date,
-                e.start_time,
-                e.timestamp as entry_time,
-                (SELECT x.end_date FROM reports x 
-                 WHERE x.personal_id = e.personal_id 
-                 AND x.report_type = 'exit' 
-                 AND x.timestamp > e.timestamp 
-                 ORDER BY x.timestamp LIMIT 1) as end_date,
-                (SELECT x.end_time FROM reports x 
-                 WHERE x.personal_id = e.personal_id 
-                 AND x.report_type = 'exit' 
-                 AND x.timestamp > e.timestamp 
-                 ORDER BY x.timestamp LIMIT 1) as end_time
-            FROM reports e
-            WHERE e.report_type = 'entry'
-            AND DATE(e.start_date) >= ? 
-            AND DATE(e.start_date) <= ?
-        ),
-        calculated_hours AS (
+        try:
+            # חישוב תאריכי השבוע הנוכחי (ראשון עד ראשון)
+            today = date.today()
+            days_since_sunday = (today.weekday() + 1) % 7
+            week_start = today - pd.Timedelta(days=days_since_sunday)
+            week_end = week_start + pd.Timedelta(days=6)
+            
+            st.info(f"השבוע: {week_start.strftime('%d/%m/%Y')} - {week_end.strftime('%d/%m/%Y')}")
+            
+            # שאילתה לחישוב שעות עבודה - מפושטת
+            hours_query = """
+            WITH entry_exits AS (
+                SELECT 
+                    e.personal_id,
+                    e.reporter_name,
+                    e.start_date,
+                    e.start_time,
+                    e.timestamp as entry_time,
+                    (SELECT x.end_date FROM reports x 
+                     WHERE x.personal_id = e.personal_id 
+                     AND x.report_type = 'exit' 
+                     AND x.timestamp > e.timestamp 
+                     ORDER BY x.timestamp LIMIT 1) as end_date,
+                    (SELECT x.end_time FROM reports x 
+                     WHERE x.personal_id = e.personal_id 
+                     AND x.report_type = 'exit' 
+                     AND x.timestamp > e.timestamp 
+                     ORDER BY x.timestamp LIMIT 1) as end_time
+                FROM reports e
+                WHERE e.report_type = 'entry'
+                AND DATE(e.start_date) >= ? 
+                AND DATE(e.start_date) <= ?
+            ),
+            calculated_hours AS (
+                SELECT 
+                    personal_id,
+                    reporter_name,
+                    start_date,
+                    start_time,
+                    end_date,
+                    end_time,
+                    CASE 
+                        WHEN start_time IS NOT NULL AND end_time IS NOT NULL 
+                        AND start_date IS NOT NULL AND end_date IS NOT NULL THEN
+                            CASE 
+                                WHEN start_date = end_date THEN
+                                    (EXTRACT('hour' FROM CAST(end_time AS TIME)) * 60 + EXTRACT('minute' FROM CAST(end_time AS TIME))) -
+                                    (EXTRACT('hour' FROM CAST(start_time AS TIME)) * 60 + EXTRACT('minute' FROM CAST(start_time AS TIME)))
+                                ELSE
+                                    -- חישוב עבור משמרות שעוברות חצות
+                                    (24 * 60) - (EXTRACT('hour' FROM CAST(start_time AS TIME)) * 60 + EXTRACT('minute' FROM CAST(start_time AS TIME))) +
+                                    (EXTRACT('hour' FROM CAST(end_time AS TIME)) * 60 + EXTRACT('minute' FROM CAST(end_time AS TIME)))
+                            END / 60.0
+                        ELSE NULL
+                    END as hours_worked
+                FROM entry_exits
+            )
             SELECT 
                 personal_id,
                 reporter_name,
-                start_date,
-                start_time,
-                end_date,
-                end_time,
-                CASE 
-                    WHEN start_time IS NOT NULL AND end_time IS NOT NULL 
-                    AND start_date IS NOT NULL AND end_date IS NOT NULL THEN
-                        CASE 
-                            WHEN start_date = end_date THEN
-                                (EXTRACT('hour' FROM CAST(end_time AS TIME)) * 60 + EXTRACT('minute' FROM CAST(end_time AS TIME))) -
-                                (EXTRACT('hour' FROM CAST(start_time AS TIME)) * 60 + EXTRACT('minute' FROM CAST(start_time AS TIME)))
-                            ELSE
-                                -- חישוב עבור משמרות שעוברות חצות
-                                (24 * 60) - (EXTRACT('hour' FROM CAST(start_time AS TIME)) * 60 + EXTRACT('minute' FROM CAST(start_time AS TIME))) +
-                                (EXTRACT('hour' FROM CAST(end_time AS TIME)) * 60 + EXTRACT('minute' FROM CAST(end_time AS TIME)))
-                        END / 60.0
-                    ELSE NULL
-                END as hours_worked
-            FROM entry_exits
-        )
-        SELECT 
-            personal_id,
-            reporter_name,
-            COUNT(*) as total_shifts,
-            COUNT(*) FILTER (WHERE hours_worked IS NOT NULL) as completed_shifts,
-            ROUND(SUM(COALESCE(hours_worked, 0)), 2) as total_hours,
-            ROUND(AVG(hours_worked), 2) as avg_hours_per_shift,
-            MIN(start_date) as first_shift_date,
-            MAX(COALESCE(end_date, start_date)) as last_shift_date
-        FROM calculated_hours
-        GROUP BY personal_id, reporter_name
-        ORDER BY total_hours DESC
-        """
-        
-        results = con.execute(hours_query, [week_start.strftime('%Y-%m-%d'), week_end.strftime('%Y-%m-%d')]).fetchall()
-        
-        if results:
-            # יצירת DataFrame להצגה
-            df = pd.DataFrame(results, columns=[
-                'מס אישי', 'שם', 'סה״כ משמרות', 'משמרות שהושלמו', 
-                'סה״כ שעות', 'ממוצע שעות למשמרת', 'תאריך ראשון', 'תאריך אחרון'
-            ])
+                COUNT(*) as total_shifts,
+                COUNT(*) FILTER (WHERE hours_worked IS NOT NULL) as completed_shifts,
+                ROUND(SUM(COALESCE(hours_worked, 0)), 2) as total_hours,
+                ROUND(AVG(hours_worked), 2) as avg_hours_per_shift,
+                MIN(start_date) as first_shift_date,
+                MAX(COALESCE(end_date, start_date)) as last_shift_date
+            FROM calculated_hours
+            GROUP BY personal_id, reporter_name
+            ORDER BY total_hours DESC
+            """
             
-            # הצגת סיכום כללי
-            total_hours_all = df['סה״כ שעות'].sum()
-            total_shifts_all = df['סה״כ משמרות'].sum()
-            active_employees = len(df)
+            results = con.execute(hours_query, [week_start.strftime('%Y-%m-%d'), week_end.strftime('%Y-%m-%d')]).fetchall()
             
-            col1, col2, col3 = st.columns(3)
-            with col1:
-                st.metric("סה״כ שעות השבוע", f"{total_hours_all:.1f}")
-            with col2:
-                st.metric("סה״כ משמרות", total_shifts_all)
-            with col3:
-                st.metric("עובדים פעילים", active_employees)
-            
-            # הצגת הטבלה
-            st.dataframe(
-                df,
-                use_container_width=True,
-                hide_index=True
-            )
-            
-            # גרף שעות עבודה
-            if len(df) > 0:
-                st.subheader("📈 גרף שעות עבודה")
-                chart_data = df.set_index('שם')['סה״כ שעות']
-                st.bar_chart(chart_data)
-            
-            # פירוט יומי לכל עובד
-            if st.checkbox("🔍 הצג פירוט יומי"):
-                selected_employee = st.selectbox(
-                    "בחר עובד:",
-                    options=df['מס אישי'].tolist(),
-                    format_func=lambda x: f"{df[df['מס אישי']==x]['שם'].iloc[0]} ({x})"
+            if results:
+                # יצירת DataFrame להצגה
+                df = pd.DataFrame(results, columns=[
+                    'מס אישי', 'שם', 'סה״כ משמרות', 'משמרות שהושלמו', 
+                    'סה״כ שעות', 'ממוצע שעות למשמרת', 'תאריך ראשון', 'תאריך אחרון'
+                ])
+                
+                # הצגת סיכום כללי
+                total_hours_all = df['סה״כ שעות'].sum()
+                total_shifts_all = df['סה״כ משמרות'].sum()
+                active_employees = len(df)
+                
+                col1, col2, col3 = st.columns(3)
+                with col1:
+                    st.metric("סה״כ שעות השבוע", f"{total_hours_all:.1f}")
+                with col2:
+                    st.metric("סה״כ משמרות", total_shifts_all)
+                with col3:
+                    st.metric("עובדים פעילים", active_employees)
+                
+                # הצגת הטבלה
+                st.dataframe(
+                    df,
+                    use_container_width=True,
+                    hide_index=True
                 )
                 
-                if selected_employee:
-                    # שאילתה לפירוט יומי - מפושטת
-                    daily_query = """
-                    WITH daily_shifts AS (
-                        SELECT 
-                            e.start_date,
-                            e.start_time,
-                            (SELECT x.end_date FROM reports x 
-                             WHERE x.personal_id = e.personal_id 
-                             AND x.report_type = 'exit' 
-                             AND x.timestamp > e.timestamp 
-                             ORDER BY x.timestamp LIMIT 1) as end_date,
-                            (SELECT x.end_time FROM reports x 
-                             WHERE x.personal_id = e.personal_id 
-                             AND x.report_type = 'exit' 
-                             AND x.timestamp > e.timestamp 
-                             ORDER BY x.timestamp LIMIT 1) as end_time
-                        FROM reports e
-                        WHERE e.report_type = 'entry'
-                        AND e.personal_id = ?
-                        AND DATE(e.start_date) >= ? 
-                        AND DATE(e.start_date) <= ?
-                    )
-                    SELECT 
-                        start_date,
-                        start_time,
-                        end_date,
-                        end_time,
-                        CASE 
-                            WHEN start_time IS NOT NULL AND end_time IS NOT NULL 
-                            AND start_date IS NOT NULL AND end_date IS NOT NULL THEN
-                                ROUND(
-                                    CASE 
-                                        WHEN start_date = end_date THEN
-                                            ((EXTRACT('hour' FROM CAST(end_time AS TIME)) * 60 + EXTRACT('minute' FROM CAST(end_time AS TIME))) -
-                                            (EXTRACT('hour' FROM CAST(start_time AS TIME)) * 60 + EXTRACT('minute' FROM CAST(start_time AS TIME)))) / 60.0
-                                        ELSE
-                                            (((24 * 60) - (EXTRACT('hour' FROM CAST(start_time AS TIME)) * 60 + EXTRACT('minute' FROM CAST(start_time AS TIME))) +
-                                            (EXTRACT('hour' FROM CAST(end_time AS TIME)) * 60 + EXTRACT('minute' FROM CAST(end_time AS TIME)))) / 60.0)
-                                    END, 2
-                                )
-                            ELSE NULL
-                        END as hours_worked
-                    FROM daily_shifts
-                    ORDER BY start_date, start_time
-                    """
-                    
-                    daily_results = con.execute(daily_query, [
-                        selected_employee, 
-                        week_start.strftime('%Y-%m-%d'), 
-                        week_end.strftime('%Y-%m-%d')
-                    ]).fetchall()
-                    
-                    if daily_results:
-                        daily_df = pd.DataFrame(daily_results, columns=[
-                            'תאריך כניסה', 'שעת כניסה', 'תאריך יציאה', 'שעת יציאה', 'שעות עבודה'
-                        ])
-                        st.dataframe(daily_df, use_container_width=True, hide_index=True)
-                    else:
-                        st.info("אין נתונים לעובד זה השבוע")
-        else:
-            st.info("אין נתונים לשבוע הנוכחי")
+                # גרף שעות עבודה
+                if len(df) > 0:
+                    st.subheader("📈 גרף שעות עבודה")
+                    chart_data = df.set_index('שם')['סה״כ שעות']
+                    st.bar_chart(chart_data)
+            else:
+                st.info("אין נתונים לשבוע הנוכחי")
+                
+        except Exception as e:
+            st.error(f"שגיאה בטעינת נתוני השעות: {str(e)}")
+    
+    elif admin_tab == "ירוק בעיניים - מעקב":
+        st.subheader("👀 מעקב ירוק בעיניים")
+        
+        try:
+            # הצגת כל הדיווחים
+            all_reports = con.execute("""
+                SELECT personal_id, reporter_name, current_location, 
+                       strftime('%d/%m/%Y %H:%M', datetime(timestamp)) as report_datetime
+                FROM green_eyes 
+                ORDER BY timestamp DESC
+            """).fetchall()
             
-    except Exception as e:
-        st.error(f"שגיאה בטעינת נתוני השעות: {str(e)}")
+            # יצירת רשימת מי דיווח
+            reported_ids = [report[0] for report in all_reports] if all_reports else []
+            
+            # מי לא דיווח
+            not_reported = []
+            for pid, name in personal_data.items():
+                if pid not in reported_ids:
+                    not_reported.append((pid, name))
+            
+            # הצגת סיכום
+            col1, col2 = st.columns(2)
+            with col1:
+                st.metric("דיווחו על מיקום", len(reported_ids))
+            with col2:
+                st.metric("לא דיווחו", len(not_reported))
+            
+            # טבלת הדיווחים
+            if all_reports:
+                st.subheader("📊 כל הדיווחים")
+                df_reports = pd.DataFrame(all_reports, columns=[
+                    'מס אישי', 'שם', 'מיקום נוכחי', 'תאריך ושעת עדכון'
+                ])
+                st.dataframe(df_reports, use_container_width=True, hide_index=True)
+            
+            # מי לא דיווח
+            if not_reported:
+                st.subheader("⚠️ לא דיווחו על מיקום")
+                for pid, name in not_reported:
+                    st.warning(f"**{name}** (מ.א. {pid}) - לא דיווח על מיקום")
+            else:
+                st.success("✅ כולם דיווחו על מיקום!")
+                
+        except Exception as e:
+            st.error(f"שגיאה בטעינת נתוני ירוק בעיניים: {str(e)}")
+    
+    elif admin_tab == "ניהול נתונים":
+        st.subheader("🗂️ ניהול נתונים")
+        
+        st.warning("⚠️ פעולות אלו יימחקו נתונים לצמיתות!")
+        
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            if st.button("🗑️ איפוס נתוני ירוק בעיניים", type="secondary"):
+                if st.session_state.get('confirm_green_eyes_reset', False):
+                    try:
+                        con.execute("DELETE FROM green_eyes")
+                        st.success("✅ נתוני ירוק בעיניים נמחקו בהצלחה!")
+                        st.session_state.confirm_green_eyes_reset = False
+                        st.rerun()
+                    except Exception as e:
+                        st.error(f"❌ שגיאה במחיקת הנתונים: {str(e)}")
+                else:
+                    st.session_state.confirm_green_eyes_reset = True
+                    st.warning("לחץ שוב לאישור המחיקה")
+        
+        with col2:
+            if st.button("🗑️ איפוס נתוני דיווחי משמרות", type="secondary"):
+                if st.session_state.get('confirm_reports_reset', False):
+                    try:
+                        con.execute("DELETE FROM reports")
+                        st.success("✅ נתוני דיווחי המשמרות נמחקו בהצלחה!")
+                        st.session_state.confirm_reports_reset = False
+                        st.rerun()
+                    except Exception as e:
+                        st.error(f"❌ שגיאה במחיקת הנתונים: {str(e)}")
+                else:
+                    st.session_state.confirm_reports_reset = True
+                    st.warning("לחץ שוב לאישור המחיקה")
+        
+        # איפוס סטטוס האישורים
+        if st.button("❌ ביטול", type="primary"):
+            st.session_state.confirm_green_eyes_reset = False
+            st.session_state.confirm_reports_reset = False
+            st.rerun()
     
     # כפתור יציאה
-    if st.button("🚪 יציאה מדיווח שעות"):
+    if st.button("🚪 יציאה מדף המפקד"):
         st.session_state.access_granted = False
         st.rerun()
 
@@ -469,7 +504,6 @@ else:
             else:
                 reporter_name = "מספר לא נמצא"
 
-
             reporter_name = (f"{reporter_name}")
         
         with col2:
@@ -485,7 +519,7 @@ else:
                     work_location = st.text_input("פרט מיקום:", placeholder="הכנס מיקום")
             
             with col4:
-                replacing_who = st.selectbox("את מי אתה מחליף : " , names_list)
+                replacing_who = st.selectbox("את מי אתה מחליף :" , [personal_data.values()])
     
             # תאריך ושעה נוכחיים (לא ניתנים לשינוי)
             current_date = date.today()
@@ -589,207 +623,7 @@ else:
     # קו הפרדה
     st.markdown("---")
 
-    # סטטיסטיקות - עדכון להתמקד בדיווחים שהועלו
-    # st.subheader("📊 סטטיסטיקות")
-
-    # try:
-    #     # שאילתת סטטיסטיקות מעודכנת עם דגש על דיווחים שהועלו
-    #     stats_query = """
-    #         WITH shift_data AS (
-    #             SELECT 
-    #                 *,
-    #                 CASE 
-    #                     WHEN report_type = 'entry' AND start_time IS NOT NULL THEN
-    #                         CASE 
-    #                             WHEN start_time >= '07:00:00' AND start_time < '15:00:00' THEN 'בוקר (07:00-15:00)'
-    #                             WHEN start_time >= '15:00:00' AND start_time < '23:00:00' THEN 'צהריים (15:00-23:00)'
-    #                             ELSE 'לילה (23:00-07:00)'
-    #                         END
-    #                     WHEN report_type = 'exit' AND end_time IS NOT NULL THEN
-    #                         CASE 
-    #                             WHEN end_time >= '07:00:00' AND end_time < '15:00:00' THEN 'בוקר (07:00-15:00)'
-    #                             WHEN end_time >= '15:00:00' AND end_time < '23:00:00' THEN 'צהריים (15:00-23:00)'
-    #                             ELSE 'לילה (23:00-07:00)'
-    #                         END
-    #                     ELSE 'לא צוין'
-    #                 END as shift_period
-    #             FROM reports
-    #         )
-    #         SELECT
-    #             COUNT(*) AS total_reports,
-    #             COUNT(*) FILTER (WHERE DATE(timestamp) = CURRENT_DATE) AS today_reports,
-    #             COUNT(*) FILTER (WHERE report_type = 'entry') AS total_entries,
-    #             COUNT(*) FILTER (WHERE report_type = 'exit') AS total_exits,
-    #             COUNT(DISTINCT DATE(timestamp)) AS total_days,
-    #             -- סה"כ דיווחים שהועלו (רק מיציאות)
-    #             SUM(CASE WHEN report_type = 'exit' AND reports_count IS NOT NULL THEN reports_count ELSE 0 END) as total_uploaded_reports,
-    #             -- ממוצע דיווחים שהועלו למשמרת
-    #             CASE 
-    #                 WHEN COUNT(*) FILTER (WHERE report_type = 'exit' AND reports_count IS NOT NULL) > 0 
-    #                 THEN ROUND(
-    #                     CAST(SUM(CASE WHEN report_type = 'exit' AND reports_count IS NOT NULL THEN reports_count ELSE 0 END) AS FLOAT) / 
-    #                     CAST(COUNT(*) FILTER (WHERE report_type = 'exit' AND reports_count IS NOT NULL) AS FLOAT), 2
-    #                 )
-    #                 ELSE 0 
-    #             END as avg_reports_per_exit,
-    #             -- סטטיסטיקות לפי משמרות
-    #             COUNT(*) FILTER (WHERE shift_period = 'בוקר (07:00-15:00)') AS morning_shifts,
-    #             COUNT(*) FILTER (WHERE shift_period = 'צהריים (15:00-23:00)') AS afternoon_shifts,
-    #             COUNT(*) FILTER (WHERE shift_period = 'לילה (23:00-07:00)') AS night_shifts,
-    #             -- ממוצע דיווחים שהועלו לפי סוג משמרת
-    #             AVG(reports_count) FILTER (WHERE shift_period = 'בוקר (07:00-15:00)' AND reports_count IS NOT NULL) AS avg_morning_reports,
-    #             AVG(reports_count) FILTER (WHERE shift_period = 'צהריים (15:00-23:00)' AND reports_count IS NOT NULL) AS avg_afternoon_reports,
-    #             AVG(reports_count) FILTER (WHERE shift_period = 'לילה (23:00-07:00)' AND reports_count IS NOT NULL) AS avg_night_reports
-    #         FROM shift_data
-    #     """
-    #     results = con.execute(stats_query).fetchone()
-
-    #     # הצגת מטריקות עיקריות
-    #     col1, col2, col3, col4 = st.columns(4)
-        
-    #     with col1:
-    #         st.metric("סה\"כ דיווחי מערכת", results[0] if results[0] else 0)
-        
-    #     with col2:
-    #         st.metric("דיווחי מערכת היום", results[1] if results[1] else 0)
-        
-    #     with col3:
-    #         active_shifts = max(0, (results[2] if results[2] else 0) - (results[3] if results[3] else 0))
-    #         st.metric("משמרות פעילות", active_shifts)
-        
-    #     with col4:
-    #         st.metric("סה\"כ דיווחים שהועלו", results[5] if results[5] else 0)
-
-    #     # סטטיסטיקות מפורטות
-    #     st.markdown("### 📈 סטטיסטיקות מפורטות")
-        
-    #     col5, col6 = st.columns(2)
-        
-    #     with col5:
-    #         st.info(f"**כניסות למשמרת:** {results[2] if results[2] else 0}")
-    #         st.info(f"**יציאות ממשמרת:** {results[3] if results[3] else 0}")
-    #         st.info(f"**ימי פעילות:** {results[4] if results[4] else 0}")
-        
-    #     with col6:
-    #         avg_reports_per_exit = results[6] if results[6] else 0
-    #         st.info(f"**ממוצע דיווחים שהועלו למשמרת:** {avg_reports_per_exit}")
-    #         completed_shifts = results[3] if results[3] else 0
-    #         st.info(f"**משמרות שהושלמו:** {completed_shifts}")
-
-    #     # סטטיסטיקות לפי משמרות
-    #     st.markdown("### 🕐 התפלגות לפי משמרות")
-        
-    #     shift_col1, shift_col2, shift_col3 = st.columns(3)
-        
-    #     with shift_col1:
-    #         st.markdown("**🌅 משמרת בוקר (07:00-15:00)**")
-    #         morning_count = results[7] if results[7] else 0
-    #         morning_avg = round(results[10], 1) if results[10] else 0
-    #         st.write(f"דיווחי מערכת: {morning_count}")
-    #         st.write(f"ממוצע דיווחים שהועלו: {morning_avg}")
-        
-    #     with shift_col2:
-    #         st.markdown("**☀️ משמרת צהריים (15:00-23:00)**")
-    #         afternoon_count = results[8] if results[8] else 0
-    #         afternoon_avg = round(results[11], 1) if results[11] else 0
-    #         st.write(f"דיווחי מערכת: {afternoon_count}")
-    #         st.write(f"ממוצע דיווחים שהועלו: {afternoon_avg}")
-        
-    #     with shift_col3:
-    #         st.markdown("**🌙 משמרת לילה (23:00-07:00)**")
-    #         night_count = results[9] if results[9] else 0
-    #         night_avg = round(results[12], 1) if results[12] else 0
-    #         st.write(f"דיווחי מערכת: {night_count}")
-    #         st.write(f"ממוצע דיווחים שהועלו: {night_avg}")
-
-    #     # גרף התפלגות משמרות (אם יש נתונים)
-    #     if any([results[7], results[8], results[9]]):
-    #         st.markdown("### 📊 גרף התפלגות משמרות")
-            
-    #         shift_data = {
-    #             'משמרת': ['בוקר', 'צהריים', 'לילה'],
-    #             'כמות דיווחי מערכת': [results[7] or 0, results[8] or 0, results[9] or 0]
-    #         }
-            
-    #         df = pd.DataFrame(shift_data)
-    #         st.bar_chart(df.set_index('משמרת'))
-
-    # except Exception as e:
-    #     st.error(f"שגיאה בטעינת הסטטיסטיקות: {str(e)}")
-
-    # # דיווחים אחרונים והערות
-    # col_left, col_right = st.columns(2)
-
-    # with col_left:
-    #     if st.checkbox("🔍 הצג דיווחים אחרונים"):
-    #         try:
-    #             recent_reports = con.execute("""
-    #                 SELECT 
-    #                     report_type,
-    #                     personal_id,
-    #                     reporter_name,
-    #                     unit_commander,
-    #                     reports_count,
-    #                     CASE 
-    #                         WHEN report_type = 'entry' THEN start_date || ' ' || start_time
-    #                         ELSE end_date || ' ' || end_time
-    #                     END as datetime,
-    #                     timestamp
-    #                 FROM reports 
-    #                 ORDER BY timestamp DESC 
-    #                 LIMIT 10
-    #             """).fetchall()
-                
-    #             if recent_reports:
-    #                 st.subheader("📋 דיווחים אחרונים")
-    #                 for i, report in enumerate(recent_reports, 1):
-    #                     report_type_hebrew = "🟢 כניסה" if report[0] == "entry" else "🔴 יציאה"
-    #                     reports_info = f" ({report[4]} דיווחים)" if report[0] == "exit" and report[4] is not None else ""
-    #                     st.write(f"{i}. **{report_type_hebrew}** - {report[2]} (מ.א. {report[1]}) - מפקד: {report[3]}{reports_info} - {report[5]}")
-    #             else:
-    #                 st.info("אין דיווחים קיימים במערכת")
-                    
-    #         except Exception as e:
-    #             st.error(f"שגיאה בטעינת הדיווחים: {str(e)}")
-
-    # with col_right:
-    #     if st.checkbox("💬 הצג הערות מיוחדות"):
-    #         try:
-    #             notes_query = """
-    #                 SELECT 
-    #                     reporter_name,
-    #                     personal_id,
-    #                     special_notes,
-    #                     reports_count,
-    #                     CASE 
-    #                         WHEN report_type = 'entry' THEN start_date
-    #                         ELSE end_date
-    #                     END as report_date,
-    #                     report_type
-    #                 FROM reports 
-    #                 WHERE special_notes IS NOT NULL 
-    #                 AND special_notes != ''
-    #                 ORDER BY timestamp DESC 
-    #                 LIMIT 15
-    #             """
-    #             notes_reports = con.execute(notes_query).fetchall()
-                
-    #             if notes_reports:
-    #                 st.subheader("📝 הערות מיוחדות")
-    #                 for note in notes_reports:
-    #                     report_type_hebrew = "כניסה" if note[5] == "entry" else "יציאה"
-    #                     reports_info = f" - {note[3]} דיווחים" if note[5] == "exit" and note[3] is not None else ""
-    #                     with st.expander(f"{note[0]} ({report_type_hebrew}) - {note[4]}{reports_info}"):
-    #                         st.write(f"**מ.א.:** {note[1]}")
-    #                         st.write(f"**הערה:** {note[2]}")
-    #             else:
-    #                 st.info("אין הערות מיוחדות במערכת")
-                    
-    #         except Exception as e:
-    #             st.error(f"שגיאה בטעינת ההערות: {str(e)}")
-
-    # מידע נוסף
-    with st.expander("ℹ️ הוראות שימוש"):
+with st.expander("ℹ️ הוראות שימוש"):
         st.markdown("""
         **איך להשתמש במערכת:**
         

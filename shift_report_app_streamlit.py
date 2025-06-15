@@ -649,6 +649,8 @@ else:
                 
             if required_fields_missing:
                 st.error(f"❌ נא למלא את השדות הנדרשים: {', '.join(required_fields_missing)}")
+            elif reporter_name == "מספר לא נמצא":
+                st.error("❌ מספר אישי לא תקין")
             else:
                 try:
                     timestamp = datetime.now().isoformat()

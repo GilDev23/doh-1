@@ -286,9 +286,9 @@ if page == "ירוק בעיניים":
                     timestamp = datetime.now()
                     con.execute("""
                         INSERT OR REPLACE INTO green_eyes (
-                            personal_id, reporter_name, current_location, timestamp
+                            personal_id, reporter_name, current_location, on_shift, timestamp
                         ) VALUES (?, ?, ?, ?)
-                    """, (personal_id, reporter_name, current_location.strip(), timestamp))
+                    """, (personal_id, reporter_name, current_location.strip(),on_shift,timestamp))
                     
                     st.success(f"✅ המיקום עודכן בהצלחה! {reporter_name} נמצא ב{current_location.strip()}")
                     st.balloons()

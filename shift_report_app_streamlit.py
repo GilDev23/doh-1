@@ -270,8 +270,7 @@ if page == "ירוק בעיניים":
             current_location = st.text_input("מיקום נוכחי *", placeholder="הכנס מיקום חופשי")
 
             on_shift = st.radio("האם אתה במשמרת או בפעילות מבצעית?", ["כן", "לא"])
-            on_shift_icon = "✅" if on_shift == "כן" else "❌"
-        
+            
         # כפתור שליחה
         submitted = st.form_submit_button("📍 עדכן מיקום", type="primary")
         
@@ -287,7 +286,7 @@ if page == "ירוק בעיניים":
                     con.execute("""
                         INSERT OR REPLACE INTO green_eyes (
                             personal_id, reporter_name, current_location, on_shift, timestamp
-                        ) VALUES (?, ?, ?, ?)
+                        ) VALUES (?, ?, ?,?, ?)
                     """, (personal_id, reporter_name, current_location.strip(),on_shift,timestamp))
                     
                     st.success(f"✅ המיקום עודכן בהצלחה! {reporter_name} נמצא ב{current_location.strip()}")

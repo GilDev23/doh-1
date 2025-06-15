@@ -611,7 +611,7 @@ else:
                     work_location = st.text_input("פרט מיקום:", placeholder="הכנס מיקום")
             
             with col4:
-                replacing_who = st.selectbox("את מי אתה מחליף :" , [personal_data.values()])
+                replacing_who = st.selectbox("את מי אתה מחליף :" ,names_list)
     
             # תאריך ושעה נוכחיים (לא ניתנים לשינוי)
             current_date = date.today()
@@ -636,7 +636,7 @@ else:
             col3, col4 = st.columns(2)
             
             with col3:
-                replacement_person = st.selectbox("מי מחליף אותך:", ["אסף גבור","חיה סגל","צאלח חיר"])
+                replacement_person = st.selectbox("מי מחליף אותך:",names_list )
             
             with col4:
                 reports_count = st.number_input("מספר דיווחים שהעלית במשמרת *:", min_value=0, step=1, value=0)
